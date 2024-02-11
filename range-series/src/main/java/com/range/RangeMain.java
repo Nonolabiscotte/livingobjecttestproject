@@ -12,10 +12,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class Range {
+public class RangeMain {
 
     // Logger definition
-    private static final Logger logger = Logger.getLogger(Range.class.getName());
+    private static final Logger logger = Logger.getLogger(RangeMain.class.getName());
 
 
     // ranges variable accessible to the whole Main class
@@ -78,7 +78,7 @@ public class Range {
      */
     public static List<com.range.entities.Range> convertArgumentsInRanges(String args) {
         // Output instance
-        List<com.range.entities.Range> ranges = new ArrayList<>();
+        List<com.range.entities.Range> ranges = List.of();
         // Create a Matcher to find Ranges pattern in the input args
         // Regular expression definition
         Pattern pattern = Pattern.compile(regexLabel);
@@ -93,10 +93,7 @@ public class Range {
             int rangeUpperBoundary = Integer.parseInt(matcher.group(3));
 
             // Range object instance
-            com.range.entities.Range range = new com.range.entities.Range();
-            range.setLabel(rangeLabel);
-            range.setLowerBoundary(rangeLowerBoundary);
-            range.setUpperBoundary(rangeUpperBoundary);
+            com.range.entities.Range range = new com.range.entities.Range(rangeLabel, rangeLowerBoundary, rangeUpperBoundary);
             ranges.add(range);
         }
 
@@ -109,9 +106,12 @@ public class Range {
      * @return A list of String containing the name of the ranges.
      */
     public static List<String> matchingLabels(int item) {
-        return getRanges().stream()
+        return getRanges()
+                // NEW : Parallel Stream
+                .parallelStream()
                 .filter(range -> range != null && range.isItemInBoundaries(item))
-                .map(com.range.entities.Range::getLabel)
-                .collect(Collectors.toList());
+                .map(com.range.entities.Range::label)
+                // NEW : toList from JAVA 17
+                .toList();
     }
 }

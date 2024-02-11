@@ -2,19 +2,11 @@ package com.range.entities;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-@Data
-@EqualsAndHashCode
-public class Range {
-    /* Range name */
-    String label;
-    /* Range Lower boundary*/
-    
-    int lowerBoundary;
-    /* Range Upper boundary */
-    int upperBoundary;
-
+// NEW : RECORD class
+public record Range (String label, int lowerBoundary, int upperBoundary) {
     public boolean isItemInBoundaries(int item) {
-        return this.getLowerBoundary() <= item && this.getUpperBoundary() > item;
+        return this.lowerBoundary() <= item && this.upperBoundary() > item;
     }
 }

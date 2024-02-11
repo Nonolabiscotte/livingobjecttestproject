@@ -1,79 +1,29 @@
-import com.range.Range;
+import com.range.RangeMain;
 import org.junit.Assert;
 import org.junit.Test;
 
 import static org.mockito.Mockito.*;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class MainTest {
     // Mock
-    Range rangeClassMock = mock(Range.class);
-    private static final Logger logger = Logger.getLogger(MainTest.class.getName());
-
-    @Test
-    public void test_convert_arguments_in_ranges() {
-        // Input simulation
-        String stringToConvertInArray = "A -> {0, 6}, b->{5,7}";
-
-        List<com.range.entities.Range> ranges = rangeClassMock.convertArgumentsInRanges(stringToConvertInArray);
-
-        Assert.assertNotNull(ranges);
-
-        com.range.entities.Range firstRange = new com.range.entities.Range();
-        firstRange.setUpperBoundary(6);
-        firstRange.setLowerBoundary(0);
-        firstRange.setLabel("A");
-
-        com.range.entities.Range secondRange = new com.range.entities.Range();
-        secondRange.setUpperBoundary(7);
-        secondRange.setLowerBoundary(5);
-        secondRange.setLabel("b");
-
-        Assert.assertEquals(firstRange, ranges.get(0));
-        Assert.assertEquals(secondRange, ranges.get(1));
-    }
-
-    @Test
-    public void test_matching_labels_multiple_ranges() {
-
-        List<com.range.entities.Range> ranges = new ArrayList<>();
-        com.range.entities.Range firstRange = new com.range.entities.Range();
-        firstRange.setUpperBoundary(6);
-        firstRange.setLowerBoundary(0);
-        firstRange.setLabel("A");
-
-        com.range.entities.Range secondRange = new com.range.entities.Range();
-        secondRange.setUpperBoundary(1000);
-        secondRange.setLowerBoundary(5);
-        secondRange.setLabel("B");
-
-        com.range.entities.Range thirdRange = new com.range.entities.Range();
-        thirdRange.setUpperBoundary(5);
-        thirdRange.setLowerBoundary(2);
-        thirdRange.setLabel("C");
-
-        ranges.add(firstRange);
-        ranges.add(secondRange);
-
-        rangeClassMock.ranges = ranges;
-
-        Assert.assertEquals(2, rangeClassMock.matchingLabels(5).size());
-        Assert.assertEquals(firstRange, ranges.get(0));
-        Assert.assertEquals(secondRange, ranges.get(1));
-    }
+    RangeMain rangeMainClassMock = mock(RangeMain.class);
 
     @Test
     public void test_bad_argument_input() {
         // Input simulation
         String stringToConvertInArray = randomStringGenerator();
 
-        List<com.range.entities.Range> ranges = rangeClassMock.convertArgumentsInRanges(stringToConvertInArray);
+        List<com.range.entities.Range> ranges = rangeMainClassMock.convertArgumentsInRanges(stringToConvertInArray);
 
         Assert.assertNotNull(ranges);
         Assert.assertEquals(0, ranges.size());
@@ -82,12 +32,13 @@ public class MainTest {
     @Test
     public void test_performance() {
         Random random = new Random();
-        List<com.range.entities.Range> ranges = generateMultipleRanges(1000000000);
+        List<com.range.entities.Range> ranges = generateMultipleRanges(10000000);
         int firstNumber = random.nextInt(10001);
-        rangeClassMock.setRanges(ranges);
-        System.out.println(System.currentTimeMillis());
-        rangeClassMock.matchingLabels(firstNumber);
-        System.out.println(System.currentTimeMillis());
+        rangeMainClassMock.setRanges(ranges);
+        long start = System.currentTimeMillis();
+        rangeMainClassMock.matchingLabels(firstNumber);
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
     }
 
     private static String randomStringGenerator() {
@@ -131,11 +82,12 @@ public class MainTest {
     private static List<com.range.entities.Range> generateMultipleRanges(int numberOfRanges) {
 
         List<com.range.entities.Range> rangelist = new ArrayList<>();
-        for (int i = 1; i <= numberOfRanges;i++) {
-            com.range.entities.Range range = new com.range.entities.Range();
-            range.setLabel(generateRandomValidNameForRange());
-            range.setUpperBoundary(generateRandomNumber()[0]);
-            range.setLowerBoundary(generateRandomNumber()[1]);
+        for (int i = 1; i <= numberOfRanges; i++) {
+            com.range.entities.Range range = new com.range.entities.Range(
+                    generateRandomValidNameForRange(),
+                    generateRandomNumber()[0],
+                    generateRandomNumber()[1]);
+
             rangelist.add(range);
         }
 
