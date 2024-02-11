@@ -82,12 +82,14 @@ public class MainTest {
     @Test
     public void test_performance() {
         Random random = new Random();
-        List<com.range.entities.Range> ranges = generateMultipleRanges(1000000000);
+        List<com.range.entities.Range> ranges = generateMultipleRanges(20000000);
         int firstNumber = random.nextInt(10001);
         rangeClassMock.setRanges(ranges);
-        System.out.println(System.currentTimeMillis());
+        long start = System.currentTimeMillis();
         rangeClassMock.matchingLabels(firstNumber);
-        System.out.println(System.currentTimeMillis());
+        long end = System.currentTimeMillis();
+
+        System.out.println(end - start);
     }
 
     private static String randomStringGenerator() {
